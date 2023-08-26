@@ -1,12 +1,10 @@
 package com.igor.springmvc.service;
 
-import com.igor.springmvc.model.User;
-
 import java.util.List;
 
 public interface CommonService<T> {
-    int create(T entity);
+    //void create(T entity);
     List<T> readAll(int id);
-    void update(T entity);
+    void update(T entity, int id);
     void delete(int id);
 }

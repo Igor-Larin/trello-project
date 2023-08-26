@@ -22,7 +22,8 @@ public class CardController {
     @PostMapping("/users/{userId}/desks/{deskId}/newCard")
     public ResponseEntity<?> createCard(@RequestBody Card card, @PathVariable("deskId") int deskId)
     {
-        return cardService.create(card) > 0 ? new ResponseEntity<>(HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        cardService.update(card, deskId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}/desks/{deskId}/cards")

@@ -1,55 +1,39 @@
 package com.igor.springmvc.service;
 
 import com.igor.springmvc.model.Card;
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class CardService implements CommonService<Card> {
-    private NamedParameterJdbcTemplate jdbcTemplate;
-
+    private final SessionFactory sessionFactory;
     @Autowired
-    public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-    @Override
-    public int create(Card entity) {
-        String sql = "INSERT INTO cards (card_name, card_descr, desk_id) VALUES(:cardName, :cardDescr, :deskId)";
-        Map<String, Object> params = new HashMap<>();
-        params.put("cardName", entity.getName());
-        params.put("cardDescr", entity.getDescr());
-        return jdbcTemplate.update(sql, params);
+    public CardService(EntityManagerFactory factory) {
+        this.sessionFactory = factory.unwrap(SessionFactory.class);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Card> readAll(int id) {
-        String sql = "SELECT card_id, card_name, card_descr FROM cards WHERE desk_id=:deskId";
-        Map<String, Object> params = new HashMap<>();
-        params.put("deskId", id);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
-            Card card = new Card();
-            card.setName(rs.getString("card_name"));
-            card.setDescr(rs.getString("card_descr"));
-            card.setId(rs.getInt("card_id"));
-            return card;
-        });
+        return sessionFactory.getCurrentSession().createNamedQuery("Card.getAll", Card.class).setParameter("deskId", id).list();
     }
 
     @Override
-    public void update(Card entity) {
-
+    public void update(Card entity, int id) {
+        sessionFactory.getCurrentSession().persist(entity);
     }
 
     @Override
     public void delete(int id) {
-        String sql = "DELETE FROM cards WHERE card_id=:cardId";
-        Map<String, Object> params = new HashMap<>();
-        params.put("cardId", id);
-        jdbcTemplate.update(sql, params);
+        sessionFactory.getCurrentSession().createNamedQuery("Card.delete").setParameter("cardId", id);
     }
 }

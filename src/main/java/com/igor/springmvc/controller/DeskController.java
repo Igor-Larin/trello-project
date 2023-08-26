@@ -22,7 +22,8 @@ public class DeskController {
     @PostMapping("/users/{userId}/newDesk")
     public ResponseEntity<?> createDesk(@RequestBody Desk desk, @PathVariable("userId") int userId)
     {
-        return deskService.create(desk) > 0 ? new ResponseEntity<>(HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        deskService.update(desk, userId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}/desks")

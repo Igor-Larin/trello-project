@@ -1,5 +1,6 @@
 package com.igor.springmvc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ public class User implements BasicEntity{
     private String email;
     @Column(name = "name")
     private String name;
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Desk> desks = new HashSet<>();
 

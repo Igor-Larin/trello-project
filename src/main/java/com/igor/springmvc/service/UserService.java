@@ -18,7 +18,6 @@ public class UserService implements CommonService<User> {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
     public int create(User entity) {
         String sql = "INSERT INTO users (name, email) VALUES(:userName, :userEmail)";
         Map<String, Object> params = new HashMap<>();
@@ -39,7 +38,7 @@ public class UserService implements CommonService<User> {
     }
 
     @Override
-    public void update(User entity) {
+    public void update(User entity, int id) {
 
     }
 

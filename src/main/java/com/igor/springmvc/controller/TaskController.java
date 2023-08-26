@@ -2,7 +2,6 @@ package com.igor.springmvc.controller;
 
 import com.igor.springmvc.model.Card;
 import com.igor.springmvc.model.Task;
-import com.igor.springmvc.service.DeskService;
 import com.igor.springmvc.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,8 @@ public class TaskController {
     @PostMapping("/users/{userId}/newTask")
     public ResponseEntity<?> createTask(@RequestBody Task task)
     {
-        return taskService.create(task) > 0 ? new ResponseEntity<>(HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //taskService.update(task);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}/desks/{deskId}/cards/{cardId}/tasks")

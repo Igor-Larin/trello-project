@@ -1,9 +1,15 @@
 package com.igor.springmvc.model;
 
 import jakarta.persistence.*;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Entity
 @Table(name = "tasks")
+@NamedQueries({
+        @NamedQuery(name = "Task.getAll", query = "FROM Task WHERE card.id=:cardId"),
+        @NamedQuery(name = "Task.delete", query = "DELETE Task WHERE id=:taskId")}
+)
 public class Task implements BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

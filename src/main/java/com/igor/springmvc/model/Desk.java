@@ -1,5 +1,6 @@
 package com.igor.springmvc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -7,6 +8,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "desks")
+@NamedQueries({
+        @NamedQuery(name = "Desk.getAll", query = "FROM Desk WHERE user.id=:userId"),
+        @NamedQuery(name = "Desk.delete", query = "DELETE Desk WHERE id=:deskId")}
+)
 public class Desk implements BasicEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +24,8 @@ public class Desk implements BasicEntity{
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "desk", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "desk", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Card> cards = new HashSet<>();
 
     public void setCards(Set<Card> cards) {

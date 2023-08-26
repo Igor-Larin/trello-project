@@ -1,55 +1,33 @@
 package com.igor.springmvc.service;
 
-import com.igor.springmvc.model.Card;
 import com.igor.springmvc.model.Task;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Map;
 
 @Service
+@Transactional
 public class TaskService implements CommonService<Task> {
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private SessionFactory sessionFactory;
 
-    @Autowired
-    public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public TaskService(EntityManagerFactory factory) {
+        this.sessionFactory = factory.unwrap(SessionFactory.class);
     }
-    @Override
-    public int create(Task entity) {
-        String sql = "INSERT INTO tasks (task_text, iscomplete, card_id) VALUES(:taskText, :isComplete, :cardId)";
-        Map<String, Object> params = new HashMap<>();
-        params.put("taskText", entity.getText());
-        params.put("isComplete", entity.isComplete());
-        return jdbcTemplate.update(sql, params);
-    }
-
+    @Transactional(readOnly = true)
     @Override
     public List<Task> readAll(int id) {
-        String sql = "SELECT task_id, task_text, iscomplete FROM tasks WHERE card_id=:cardId";
-        Map<String, Object> params = new HashMap<>();
-        params.put("cardId", id);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
-            Task task = new Task();
-            task.setText(rs.getString("task_text"));
-            task.setComplete(rs.getBoolean("iscomplete"));
-            return task;
-        });
+        return sessionFactory.getCurrentSession().createNamedQuery("Task.getAll", Task.class).setParameter("cardId", id).list();
     }
-
+    @Transactional()
     @Override
-    public void update(Task entity) {
-
+    public void update(Task entity, int id) {
+        sessionFactory.getCurrentSession().persist(entity);
     }
-
+    @Transactional()
     @Override
     public void delete(int id) {
-        String sql = "DELETE FROM tasks WHERE task_id=:taskId";
-        Map<String, Object> params = new HashMap<>();
-        params.put("taskId", id);
-        jdbcTemplate.update(sql, params);
+        sessionFactory.getCurrentSession().createNamedQuery("Task.delete").setParameter("taskId", id);
     }
 }
