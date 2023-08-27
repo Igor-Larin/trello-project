@@ -16,7 +16,7 @@ public class Card implements BasicEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_id")
-    private int id;
+    private Integer id;
     @Column(name = "card_name")
     private String name;
     @Column(name = "card_descr")
@@ -44,11 +44,11 @@ public class Card implements BasicEntity{
         return desk;
     }
 
-    public void setId(int cardId) {
+    public void setId(Integer cardId) {
         this.id = cardId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

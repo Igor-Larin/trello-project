@@ -1,6 +1,7 @@
 package com.igor.springmvc.controller;
 
 import com.igor.springmvc.model.Card;
+import com.igor.springmvc.model.Desk;
 import com.igor.springmvc.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,9 @@ public class CardController {
     }
 
     @PostMapping("/users/{userId}/desks/{deskId}/newCard")
-    public ResponseEntity<?> createCard(@RequestBody Card card, @PathVariable("deskId") int deskId)
+    public ResponseEntity<Integer> createCard(@RequestBody Card card, @PathVariable("deskId") int deskId)
     {
-        cardService.update(card, deskId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(cardService.update(card, deskId), HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}/desks/{deskId}/cards")
@@ -36,6 +36,12 @@ public class CardController {
     @GetMapping("/users/{userId}/desks/{deskId}/cards/delete/{cardId}")
     public ResponseEntity<List<Card>> deleteCard(@PathVariable("cardId") int id) {
         cardService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("users/{userId}/desks/{deskId}/cards/update")
+    public ResponseEntity<?> updateDesk(@RequestBody Card card, @PathVariable("deskId") int id) {
+        cardService.update(card, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

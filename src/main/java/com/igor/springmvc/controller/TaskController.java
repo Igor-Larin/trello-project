@@ -1,6 +1,7 @@
 package com.igor.springmvc.controller;
 
 import com.igor.springmvc.model.Card;
+import com.igor.springmvc.model.Desk;
 import com.igor.springmvc.model.Task;
 import com.igor.springmvc.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,10 @@ public class TaskController {
     public void setDeskService(TaskService taskService) {
         this.taskService = taskService;
     }
-    @PostMapping("/users/{userId}/newTask")
-    public ResponseEntity<?> createTask(@RequestBody Task task)
+    @PostMapping("/users/{userId}/cards/{cardId}/newTask")
+    public ResponseEntity<Integer> createTask(@RequestBody Task task, @PathVariable("cardId") int id)
     {
-        //taskService.update(task);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(taskService.update(task, id), HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}/desks/{deskId}/cards/{cardId}/tasks")
@@ -35,6 +35,12 @@ public class TaskController {
     @GetMapping("/users/{userId}/desks/{deskId}/cards/{cardId}/tasks/delete/{taskId}")
     public ResponseEntity<List<Card>> deleteTask(@PathVariable("taskId") int id) {
         taskService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/users/{userId}/desks/{deskId}/cards/{cardId}/tasks/update")
+    public ResponseEntity<?> updateDesk(@RequestBody Task task, @PathVariable("cardId") int id) {
+        taskService.update(task, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

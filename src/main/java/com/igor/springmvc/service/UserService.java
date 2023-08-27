@@ -38,8 +38,8 @@ public class UserService implements CommonService<User> {
     }
 
     @Override
-    public void update(User entity, int id) {
-
+    public Integer update(User entity, int id) {
+        return 0;
     }
 
     @Override

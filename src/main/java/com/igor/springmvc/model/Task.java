@@ -14,7 +14,7 @@ public class Task implements BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
-    private int id;
+    private Integer id;
     @Column(name = "iscomplete")
     private boolean isComplete;
     @Column(name = "task_text")
@@ -31,11 +31,11 @@ public class Task implements BasicEntity {
         this.card = card;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

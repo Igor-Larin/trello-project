@@ -16,11 +16,12 @@ public class Desk implements BasicEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "desk_id")
-    private int id;
+    private Integer id;
     @Column(name = "desk_name")
     private String name;
     @Column(name = "desk_descr")
     private String descr;
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
@@ -44,11 +45,11 @@ public class Desk implements BasicEntity{
         return user;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

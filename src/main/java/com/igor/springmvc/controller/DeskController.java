@@ -20,10 +20,9 @@ public class DeskController {
     }
 
     @PostMapping("/users/{userId}/newDesk")
-    public ResponseEntity<?> createDesk(@RequestBody Desk desk, @PathVariable("userId") int userId)
+    public ResponseEntity<Integer> createDesk(@RequestBody Desk desk, @PathVariable("userId") int userId)
     {
-        deskService.update(desk, userId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(deskService.update(desk, userId), HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}/desks")
@@ -34,8 +33,15 @@ public class DeskController {
     }
 
     @GetMapping("/users/{userId}/desks/delete/{deskId}")
-    public ResponseEntity<List<Card>> deleteDesk(@PathVariable("deskId") int id) {
+    public ResponseEntity<?> deleteDesk(@PathVariable("deskId") int id) {
         deskService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("users/{userId}/desks/update")
+    public ResponseEntity<?> updateDesk(@RequestBody Desk desk, @PathVariable("userId") int id) {
+        deskService.update(desk, id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 public class User implements BasicEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(name = "email")
     private String email;
     @Column(name = "name")
@@ -28,11 +28,11 @@ public class User implements BasicEntity{
         return desks;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
