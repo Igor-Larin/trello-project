@@ -21,6 +21,7 @@ public class Card implements BasicEntity{
     private String name;
     @Column(name = "card_descr")
     private String descr;
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "desk_id")
     private Desk desk;

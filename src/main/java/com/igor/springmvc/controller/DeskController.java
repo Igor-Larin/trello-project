@@ -1,6 +1,5 @@
 package com.igor.springmvc.controller;
 
-import com.igor.springmvc.model.Card;
 import com.igor.springmvc.model.Desk;
 import com.igor.springmvc.service.DeskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class DeskController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/users/{userId}/desks/delete/{deskId}")
+    @GetMapping("/desks/delete/{deskId}")
     public ResponseEntity<?> deleteDesk(@PathVariable("deskId") int id) {
         deskService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,5 +1,6 @@
 package com.igor.springmvc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class Task implements BasicEntity {
     private boolean isComplete;
     @Column(name = "task_text")
     private String text;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "card_id")
     private Card card;

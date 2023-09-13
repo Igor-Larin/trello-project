@@ -3,9 +3,6 @@ package com.igor.springmvc.service;
 import com.igor.springmvc.model.Card;
 import com.igor.springmvc.model.Task;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceContext;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +30,16 @@ public class TaskService implements CommonService<Task> {
         entity.setCard(findCardById(id));
         if(entity.getId() == null)
             entityManager.persist(entity);
-
         else
             entityManager.merge(entity);
         return entity.getId();
+    }
+
+    @Transactional
+    public void complete(int id) {
+        Task task = findById(id);
+        task.setComplete(!task.isComplete());
+        entityManager.merge(task);
     }
 
     private Task findById(int id) {

@@ -1,7 +1,6 @@
 package com.igor.springmvc.controller;
 
 import com.igor.springmvc.model.Card;
-import com.igor.springmvc.model.Desk;
 import com.igor.springmvc.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,26 +19,26 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @PostMapping("/users/{userId}/desks/{deskId}/newCard")
+    @PostMapping("/desks/{deskId}/newCard")
     public ResponseEntity<Integer> createCard(@RequestBody Card card, @PathVariable("deskId") int deskId)
     {
         return new ResponseEntity<>(cardService.update(card, deskId), HttpStatus.CREATED);
     }
 
-    @GetMapping("/users/{userId}/desks/{deskId}/cards")
+    @GetMapping("/desks/{deskId}/cards")
     public ResponseEntity<List<Card>> readAllCards(@PathVariable("deskId") int id) {
         List<Card> cards = cardService.readAll(id);
         return cards != null ? new ResponseEntity<>(cards, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/users/{userId}/desks/{deskId}/cards/delete/{cardId}")
+    @GetMapping("/cards/delete/{cardId}")
     public ResponseEntity<List<Card>> deleteCard(@PathVariable("cardId") int id) {
         cardService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("users/{userId}/desks/{deskId}/cards/update")
+    @PostMapping("/desks/{deskId}/cards/update")
     public ResponseEntity<?> updateDesk(@RequestBody Card card, @PathVariable("deskId") int id) {
         cardService.update(card, id);
         return new ResponseEntity<>(HttpStatus.OK);
