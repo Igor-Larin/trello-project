@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Transactional
 @Entity
 @Table(name = "tasks")
@@ -20,6 +22,17 @@ public class Task implements BasicEntity {
     private boolean isComplete;
     @Column(name = "task_text")
     private String text;
+    @Column(name = "create_date")
+    private LocalDateTime timestamp;
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "card_id")

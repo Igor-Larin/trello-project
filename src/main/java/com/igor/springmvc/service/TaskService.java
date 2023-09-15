@@ -6,6 +6,8 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,8 +30,10 @@ public class TaskService implements CommonService<Task> {
     @Override
     public Integer update(Task entity, int id) {
         entity.setCard(findCardById(id));
-        if(entity.getId() == null)
+        if(entity.getId() == null) {
+            //entity.setTimestamp(LocalDateTime.now());
             entityManager.persist(entity);
+        }
         else
             entityManager.merge(entity);
         return entity.getId();
