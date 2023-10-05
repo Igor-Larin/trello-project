@@ -1,53 +1,64 @@
 package com.igor.springmvc.service;
 
+import com.igor.springmvc.DTO.DeskRequest;
 import com.igor.springmvc.model.Card;
 import com.igor.springmvc.model.Desk;
-import com.igor.springmvc.model.User;
+import com.igor.springmvc.repository.CardRepository;
+import com.igor.springmvc.repository.DeskRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
-public class CardService implements CommonService<Card> {
-    @PersistenceContext
-    private EntityManager entityManager;
+public class CardService {
+    private CardRepository cardRepository;
+    private DeskRepository deskRepository;
+    private AuthService authService;
+    @Autowired
+    public void setAuthService(AuthService authService) {
+        this.authService = authService;
+    }
+    @Autowired
+    public void setDeskRepository(DeskRepository deskRepository) {
+        this.deskRepository = deskRepository;
+    }
+    @Autowired
+    public void setCardRepository(CardRepository cardRepository) {
+        this.cardRepository = cardRepository;
+    }
 
     @Transactional(readOnly = true)
-    @Override
-    public List<Card> readAll(int id) {
-        return entityManager.createNamedQuery("Card.getAll", Card.class).setParameter("deskId", id).getResultList();
-    }
-
-    private Card findById(int id) {
-        return entityManager.find(Card.class, id);
-    }
-
-    private Desk findDeskById(int id) {
-        return entityManager.find(Desk.class, id);
-    }
-
-    @Override
-    public Integer update(Card entity, int id) {
-        entity.setDesk(findDeskById(id));
-        if(entity.getId() == null)
-            entityManager.persist(entity);
+    public List<Card> readAll(int id) throws Exception {
+        Desk desk = deskRepository.findById(id).orElseThrow();
+        if(authService.userHas(desk))
+            return desk.getCards().stream().toList();
         else
-            entityManager.merge(entity);
-        return entity.getId();
+            throw new Exception("Попытка неавторизованного доступа");
     }
 
-    @Override
+    public void updateCard(Card newCard) {
+        Card oldCard = cardRepository.findById(newCard.getId()).orElseThrow();
+        if(!oldCard.getName().equals(newCard.getName()))
+            oldCard.setName(newCard.getName());
+        if(!oldCard.getDescr().equals(newCard.getDescr()))
+            oldCard.setDescr(newCard.getDescr());
+    }
+
+    public Integer saveCard(Card card, Integer deskId)
+    {
+        Desk desk = deskRepository.findById(deskId).orElseThrow();
+        Card createdCard = cardRepository.save(card);
+        createdCard.setDesk(desk);
+        return createdCard.getId();
+    }
+
     public void delete(int id) {
-        entityManager.remove(findById(id));
+        cardRepository.deleteById(id);
     }
 }

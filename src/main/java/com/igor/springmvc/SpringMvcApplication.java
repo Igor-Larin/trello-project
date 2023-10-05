@@ -14,14 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 public class SpringMvcApplication {
-
-   /* @Bean
-    @Autowired
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JpaTransactionManager(entityManagerFactory.unwrap(SessionFactory.class));
-    }*/
     public static void main(String[] args) {
         SpringApplication.run(SpringMvcApplication.class, args);
     }
-
 }

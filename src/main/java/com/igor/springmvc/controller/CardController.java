@@ -22,14 +22,19 @@ public class CardController {
     @PostMapping("/desks/{deskId}/newCard")
     public ResponseEntity<Integer> createCard(@RequestBody Card card, @PathVariable("deskId") int deskId)
     {
-        return new ResponseEntity<>(cardService.update(card, deskId), HttpStatus.CREATED);
+        return new ResponseEntity<>(cardService.saveCard(card, deskId), HttpStatus.CREATED);
     }
 
     @GetMapping("/desks/{deskId}/cards")
     public ResponseEntity<List<Card>> readAllCards(@PathVariable("deskId") int id) {
-        List<Card> cards = cardService.readAll(id);
-        return cards != null ? new ResponseEntity<>(cards, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            List<Card> cards = cardService.readAll(id);
+            return cards != null ? new ResponseEntity<>(cards, HttpStatus.OK) :
+                    new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @GetMapping("/cards/delete/{cardId}")
@@ -38,9 +43,9 @@ public class CardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/desks/{deskId}/cards/update")
-    public ResponseEntity<?> updateDesk(@RequestBody Card card, @PathVariable("deskId") int id) {
-        cardService.update(card, id);
+    @PostMapping("/cards/update")
+    public ResponseEntity<?> updateDesk(@RequestBody Card card) {
+        cardService.updateCard(card);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

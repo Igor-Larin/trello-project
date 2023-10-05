@@ -1,5 +1,6 @@
 package com.igor.springmvc.controller;
 
+import com.igor.springmvc.DTO.DeskRequest;
 import com.igor.springmvc.model.Desk;
 import com.igor.springmvc.service.DeskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,16 @@ public class DeskController {
         this.deskService = deskService;
     }
 
-    @PostMapping("/users/{userId}/newDesk")
-    public ResponseEntity<Integer> createDesk(@RequestBody Desk desk, @PathVariable("userId") int userId)
+    @PostMapping("/users/newDesk")
+    public ResponseEntity<Integer> createDesk(@RequestBody DeskRequest deskRequest)
     {
-        return new ResponseEntity<>(deskService.update(desk, userId), HttpStatus.CREATED);
+        Integer deskId = deskService.saveDesk(deskRequest);
+        return new ResponseEntity<>(deskId, HttpStatus.CREATED);
     }
 
-    @GetMapping("/users/{userId}/desks")
-    public ResponseEntity<List<Desk>> readAllDesks(@PathVariable("userId") int id) {
-        List<Desk> desks = deskService.readAll(id);
+    @GetMapping("/users/{username}/desks")
+    public ResponseEntity<List<Desk>> readAllDesks(@PathVariable("username") String username) {
+        List<Desk> desks = deskService.readAll(username);
         return desks != null ? new ResponseEntity<>(desks, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -37,9 +39,9 @@ public class DeskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("users/{userId}/desks/update")
-    public ResponseEntity<?> updateDesk(@RequestBody Desk desk, @PathVariable("userId") int id) {
-        deskService.update(desk, id);
+    @PostMapping("users/desks/update")
+    public ResponseEntity<?> updateDesk(@RequestBody DeskRequest deskRequest) {
+        deskService.updateDesk(deskRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

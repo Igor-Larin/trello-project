@@ -1,5 +1,6 @@
 package com.igor.springmvc.controller;
 
+import com.igor.springmvc.DTO.TaskResponse;
 import com.igor.springmvc.model.Card;
 import com.igor.springmvc.model.Task;
 import com.igor.springmvc.service.TaskService;
@@ -25,10 +26,14 @@ public class TaskController {
     }
 
     @GetMapping("/cards/{cardId}/tasks")
-    public ResponseEntity<List<Task>> readAllTasks(@PathVariable("cardId") int id) {
-        List<Task> tasks = taskService.readAll(id);
-        return tasks != null ? new ResponseEntity<>(tasks, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<TaskResponse> readAllTasks(@PathVariable("cardId") int id) {
+        try {
+            TaskResponse taskResponse = taskService.readAll(id);
+            return new ResponseEntity<>(taskResponse, HttpStatus.OK);
+        }
+        catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @GetMapping("/tasks/delete/{taskId}")
@@ -48,5 +53,16 @@ public class TaskController {
         System.out.println(id);
         taskService.complete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/newcard/{taskId}/{newCardId}")
+    public ResponseEntity<?> changeCard(@PathVariable("taskId") Integer taskId, @PathVariable("newCardId") Integer newCardID) {
+        try {
+            taskService.changeCard(taskId, newCardID);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

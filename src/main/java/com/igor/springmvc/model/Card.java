@@ -8,10 +8,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "cards")
-@NamedQueries({
-        @NamedQuery(name = "Card.getAll", query = "FROM Card WHERE desk.id=:deskId"),
-        @NamedQuery(name = "Card.delete", query = "DELETE Card WHERE id=:cardId")}
-)
 public class Card implements BasicEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

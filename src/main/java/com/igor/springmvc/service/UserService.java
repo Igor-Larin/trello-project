@@ -1,49 +1,63 @@
 package com.igor.springmvc.service;
 
+import com.igor.springmvc.DTO.AuthRequest;
 import com.igor.springmvc.model.User;
+import com.igor.springmvc.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class UserService implements CommonService<User> {
+@Transactional
+public class UserService implements UserDetailsService {
 
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private UserRepository userRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public void setbCryptPasswordEncoder(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public int create(User entity) {
-        String sql = "INSERT INTO users (name, email) VALUES(:userName, :userEmail)";
-        Map<String, Object> params = new HashMap<>();
-        params.put("userName", entity.getName());
-        params.put("userEmail", entity.getEmail());
-        return jdbcTemplate.update(sql, params);
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public List<User> readAll(int id) {
-        String sql = "SELECT id, name, email FROM USERS";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            User user = new User();
-            user.setName(rs.getString("name"));
-            user.setEmail(rs.getString("email"));
-            user.setId(rs.getInt("id"));
-            return user;
-        });
+    @Transactional(readOnly = true)
+    public List<User> readAll() {
+        return (List<User>) userRepository.findAll();
     }
 
-    @Override
-    public Integer update(User entity, int id) {
-        return 0;
+    public boolean create(AuthRequest authRequest) {
+        if(userRepository.findByUsername(authRequest.username()).isPresent())
+            return false;
+        User user = new User();
+        user.setUsername(authRequest.username());
+        user.setPassword(bCryptPasswordEncoder.encode(authRequest.password()));
+        userRepository.save(user);
+        return true;
     }
-
-    @Override
     public void delete(int id) {
+        userRepository.deleteById(id);
+    }
 
+    public void checkName(String username) throws Exception {
+        userRepository.findByUsername(username).orElseThrow(() -> new Exception("Пользователь не найден"));
+    }
+    @Transactional(readOnly = true)
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username).map(user -> new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                user.getRoles()
+        )).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
     }
 }

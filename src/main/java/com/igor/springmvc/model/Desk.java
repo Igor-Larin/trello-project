@@ -8,10 +8,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "desks")
-@NamedQueries({
-        @NamedQuery(name = "Desk.getAll", query = "FROM Desk WHERE user.id=:userId"),
-        @NamedQuery(name = "Desk.delete", query = "DELETE Desk WHERE id=:deskId")}
-)
 public class Desk implements BasicEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,13 +17,23 @@ public class Desk implements BasicEntity{
     private String name;
     @Column(name = "desk_descr")
     private String descr;
-    @JsonIgnore
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
-    private User user;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "desk_users",
+    joinColumns = @JoinColumn(name = "desk_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> users = new HashSet<>();
     @JsonIgnore
     @OneToMany(mappedBy = "desk", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Card> cards = new HashSet<>();
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
 
     public void setCards(Set<Card> cards) {
         this.cards = cards;
@@ -35,14 +41,6 @@ public class Desk implements BasicEntity{
 
     public Set<Card> getCards() {
         return cards;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public void setId(Integer id) {
